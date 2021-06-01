@@ -7,6 +7,9 @@ class MyScreen:
         self.ch = height / 2
         self.game_window = pygame.display.set_mode((width, height))
         pygame.display.set_caption("TW - Client")
+
+        # we're not storing objects for all the players in tw
+        # just their id & images
         self.image_cache = {}
     
     def set_image_cache(self, player_data):
@@ -23,9 +26,15 @@ class MyScreen:
                 image = self.image_cache[id] 
                 pos, angle = player_data[id]
                 centered_pos = self.screen_offset(pos, my_pos)
-                self.image_rotate(image, centered_pos, angle)
+                # rotating surfaces is a bit tricky so we use a separate function
+                rotated_image, new_rect = self.image_rotate(image, centered_pos, angle)
+                self.game_window.blit(rotated_image, new_rect)
+
         # now we draw the player - always last so always on the top 'layer'
-        self.image_rotate(self.image_cache[my_id], (self.cw, self.ch), my_dir)
+        # the player is also always at the centre of the screen
+        rotated_image, new_rect = self.image_rotate(self.image_cache[my_id], (self.cw, self.ch), my_dir)
+        self.game_window.blit(rotated_image, new_rect)
+
         pygame.display.flip()
 
     def make_image(self):
@@ -40,7 +49,7 @@ class MyScreen:
         deg_angle = rad_angle * (180 / math.pi)
         rotated_image = pygame.transform.rotate(image, deg_angle)
         new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
-        self.game_window.blit(rotated_image, new_rect)
+        return rotated_image, new_rect
     
     def screen_offset(self, pos, player_pos):
         abs_x, abs_y = pos

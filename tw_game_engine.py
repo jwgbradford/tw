@@ -5,11 +5,15 @@ from tw_player_ai import Player as AI
 class GameEngine:
     def __init__(self):
         self.on_start()
+        # we want to keep a list of 'registered' players
+        # this is so we can distinguish between 'real' players, and npc / ai players
         self.registered_players = []
 
     def on_start(self):
-        # all this is setting up AI players
+        # we store all players in a dictionary
+        # player_id : Player object
         players_dict = {}
+        # setting up AI players
         ai_1 =  str(randint(0, 64000))
         ai_2 =  str(randint(0, 64000))
         players_dict[ai_1] = AI(ai_1, (100,100), 0)
@@ -33,30 +37,12 @@ class GameEngine:
         self.player_dict[id].move(keys)
 
     def update_objects(self):
+        # we don't want to send the whole player object on each network broadcast
+        # so we create a temporary dictionary that the client can use to render the scene
         data_dict = {}
-        
         for id in self.player_dict:
             pos = (self.player_dict[id].x, self.player_dict[id].y)
             dir = self.player_dict[id].dir
             data = [pos, dir]
             data_dict[id] = data
         return data_dict
-
-    def get_my_image(self, my_id):
-        my_image = self.player_dict[my_id].player_image
-        my_pos = (self.player_dict[my_id].x, self.player_dict[my_id].y)
-        my_dir = self.player_dict[my_id].dir
-        return (my_image, my_pos, my_dir)
-
-    def update_images(self, my_id):
-        temp_list = []
-        for id in self.player_dict:
-            if id == my_id:
-                pass
-            else:
-                self.player_dict[id].update()
-                image = self.player_dict[id].player_image
-                pos = (self.player_dict[id].x, self.player_dict[id].y)
-                dir = self.player_dict[id].dir
-                temp_list.append([image, pos, dir])
-        return temp_list

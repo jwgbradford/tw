@@ -23,21 +23,25 @@ class TinyWorld:
 
     def threaded_client(self, conn):
         pygame.init()
-        # get player id
+        clock = pygame.time.Clock()
+
+        # get player id from new connection
         my_id = json.loads(conn.recv(2048))
         print('Player id:', my_id)
         self.game_engine.add_player(my_id)
 
-        keys = []
+        # send initial data to new connection
         starting_data = self.game_engine.update_objects()
         json_data = json.dumps(starting_data)
         conn.send(json_data.encode())
-        clock = pygame.time.Clock()
+
         while True:
             try:
                 keys = json.loads(conn.recv(2048))
                 self.game_engine.move_player(my_id, keys)
                 self.game_engine.move_ai()
+
+                # send new game data to player connection
                 data = self.game_engine.update_objects()
                 json_data = json.dumps(data)
                 conn.send(json_data.encode())
