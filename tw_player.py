@@ -13,6 +13,7 @@ class Player:
         self.move(keys)
 
     def move(self, keys):
+        print(pygame.K_LEFT)
         if keys[pygame.K_LEFT]:
             self.dir += self.turn
             if self.dir > 2 * math.pi:
