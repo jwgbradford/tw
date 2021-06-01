@@ -1,25 +1,10 @@
-import socket, json, pygame
+import socket, json, pygame, threading
 from _thread import start_new_thread
 from tw_game_engine import GameEngine as tw_ge
 
 class TinyWorld:
     def __init__(self):
         self.game_engine = tw_ge()
-        server = "192.168.0.92"
-        port = 5555
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            self.s.bind((server, port))
-        except socket.error as e:
-            print(e)
-        self.s.listen()
-        print("Waiting for a connection, Server Started")
-
-    def main(self):
-        while True:
-            conn, addr = self.s.accept()
-            print("Connected to:", addr)
-            start_new_thread(self.threaded_client, (conn,))
 
     def threaded_client(self, conn):
         pygame.init()
@@ -38,7 +23,9 @@ class TinyWorld:
         while True:
             try:
                 keys = json.loads(conn.recv(2048))
-                print(keys)
+                if not keys:
+                    print('Connection closed')
+                    break
                 self.game_engine.move_player(my_id, keys)
                 self.game_engine.move_ai()
 
@@ -50,9 +37,31 @@ class TinyWorld:
                 print(e)
                 break
             clock.tick(60)
-
+        self.print_lock.release()
         print("Lost connection")
         conn.close()
+
+    def main(self):
+        # local ip address
+        server = ""
+        port = 5555
+        # set up threading lock
+        self.print_lock = threading.Lock()
+        #set up our socket object 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.bind((server, port))
+        except socket.error as e:
+            print(e)
+        s.listen()
+        print("Waiting for a connection, Server Started")        
+        while True:
+            conn, addr = s.accept()
+            # lock acquired by client
+            self.print_lock.acquire()
+            print("Connected to:", addr)
+            start_new_thread(self.threaded_client, (conn,))
+        s.close()
 
 if __name__ == '__main__':
     tiny_world = TinyWorld()
