@@ -38,6 +38,7 @@ class TinyWorld:
         while True:
             try:
                 keys = json.loads(conn.recv(2048))
+                print(keys)
                 self.game_engine.move_player(my_id, keys)
                 self.game_engine.move_ai()
 

@@ -13,21 +13,24 @@ class Player:
         self.move(keys)
 
     def move(self, keys):
-        print(pygame.K_LEFT)
-        if keys[pygame.K_LEFT]:
-            self.dir += self.turn
-            if self.dir > 2 * math.pi:
-                self.dir -= 2 * math.pi
-        if keys[pygame.K_RIGHT]:
+        # the json converstion strippes out the object wrapping
+        # so we can't use pygame built-in CONSTANT values
+        # remember we are also moving the 'world' relative to our player
+        # so pressing the up key makes the 'world' move down
+        if keys[79]: # right
             self.dir -= self.turn
             if self.dir < 0:
                 self.dir += 2 * math.pi
-        if keys[pygame.K_UP]:
-            self.y -= self.vel * math.cos(self.dir)
-            self.x -= self.vel * math.sin(self.dir)
-        if keys[pygame.K_DOWN]:
+        if keys[80]: # left
+            self.dir += self.turn
+            if self.dir > 2 * math.pi:
+                self.dir -= 2 * math.pi
+        if keys[81]: # down
             self.y += self.vel * math.cos(self.dir)
             self.x += self.vel * math.sin(self.dir)
+        if keys[82]: # up
+            self.y -= self.vel * math.cos(self.dir)
+            self.x -= self.vel * math.sin(self.dir)
 
     def make_image(self):
         image = pygame.Surface((50, 25))

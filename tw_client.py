@@ -19,18 +19,18 @@ class MyGame:
         print('sending', my_id)
 
         # local config
+        '''
         self.game_engine.add_player(my_id)
         keys = pygame.key.get_pressed()
         clock = pygame.time.Clock()
         starting_data = self.game_engine.update_objects()
+        '''
         #end local config
 
         # network config
-        '''
         n = Network()
         n.send(my_id)
         starting_data = n.receive()
-        '''
         # end network config
 
         self.game_window.set_image_cache(starting_data)
@@ -44,21 +44,21 @@ class MyGame:
                     pygame.quit()
             keys = pygame.key.get_pressed()
             # local config
+            '''
             self.game_engine.move_player(my_id, keys)
             self.game_engine.move_ai()
             player_data = self.game_engine.update_objects()
+            '''
             #end local 
 
             # network config
-            '''
             n.send(keys)
             player_data = n.receive()
-            '''
             # end network
 
             self.game_window.redraw_window(player_data, my_id)
             # local clock tick
-            clock.tick(60)
+            #clock.tick(60)
 
 if __name__ == '__main__':
     my_game = MyGame()
