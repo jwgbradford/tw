@@ -1,4 +1,5 @@
 import pygame, tw_c, math
+from pygame.constants import K_RIGHT, K_UP, K_u
 
 class Player:
     def __init__(self, id, pos, dir):
@@ -13,22 +14,18 @@ class Player:
         self.move(keys)
 
     def move(self, keys):
-        # the json converstion strippes out the object wrapping
-        # so we can't use pygame built-in CONSTANT values
-        # remember we are also moving the 'world' relative to our player
-        # so pressing the up key makes the 'world' move down
-        if keys[79]: # right
+        if keys[pygame.K_RIGHT]:
             self.dir -= self.turn
             if self.dir < 0:
                 self.dir += 2 * math.pi
-        if keys[80]: # left
+        if keys[pygame.K_LEFT]:
             self.dir += self.turn
             if self.dir > 2 * math.pi:
                 self.dir -= 2 * math.pi
-        if keys[81]: # down
+        if keys[pygame.K_DOWN]:
             self.y += self.vel * math.cos(self.dir)
             self.x += self.vel * math.sin(self.dir)
-        if keys[82]: # up
+        if keys[pygame.K_UP]:
             self.y -= self.vel * math.cos(self.dir)
             self.x -= self.vel * math.sin(self.dir)
 

@@ -20,6 +20,7 @@ class GameEngine:
         players_dict[ai_2] = AI(ai_2, (300,300), 0)
         ###
         self.loads(players_dict)
+        self.prepare_send_object()
 
     def loads(self, data):
         self.player_dict = data
@@ -33,10 +34,11 @@ class GameEngine:
             if id not in self.registered_players:
                 self.player_dict[id].move()
 
-    def move_player(self, id, keys):
+    def move_player(self, player_data):
+        id, keys = player_data
         self.player_dict[id].move(keys)
 
-    def update_objects(self):
+    def prepare_send_object(self):
         # we don't want to send the whole player object on each network broadcast
         # so we create a temporary dictionary that the client can use to render the scene
         data_dict = {}
@@ -45,4 +47,4 @@ class GameEngine:
             dir = self.player_dict[id].dir
             data = [pos, dir]
             data_dict[id] = data
-        return data_dict
+        self.send_object = data_dict

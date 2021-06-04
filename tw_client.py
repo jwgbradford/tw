@@ -30,7 +30,10 @@ class MyGame:
         # network config
         n = Network()
         n.send(my_id)
-        starting_data = n.receive()
+        starting_data = {}
+        #wait until we're registered on the server
+        while my_id not in starting_data:
+            starting_data = n.receive()
         # end network config
 
         self.game_window.set_image_cache(starting_data)
