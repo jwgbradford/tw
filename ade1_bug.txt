@@ -1,0 +1,33 @@
+>server: 
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Waiting for a connection, Server Started
+
+> client1:
+pygame 2.0.1 (SDL 2.0.14, Python 3.6.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+sending 18919
+received {'11515': [[100, 100], 0], '2627': [[300, 300], 0], '18919': [[250, 250], 0]}
+...
+> server:
+Connected to: ('127.0.0.1', 56044)
+Player id: 18919
+
+Sometime later, start another client, client2 but this crashes client1 which
+does not recognise the new id (server ok and running two threads)
+> client2:
+$ python3 tw_client.py 
+pygame 2.0.0 (SDL 2.0.12, python 3.6.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+sending 48255
+received {'11515': [[15.366144812009257, 150.85315061890248], 4.206243497304926], '2627': [[215.36614481200996, 350.85315061890316], 4.206243497304926], '18919': [[250, 250], 0], '48255': [[250, 250], 0]}
+
+> client1 crash, client2 ok:
+Traceback (most recent call last):
+  File "tw_client.py", line 65, in <module>
+    my_game.main()
+  File "tw_client.py", line 59, in main
+    self.game_window.redraw_window(player_data, my_id)
+  File "/home/adep/DigiLocal/john/tw/tw_renderer.py", line 26, in redraw_window
+    image = self.image_cache[id] 
+KeyError: '48255'
+
