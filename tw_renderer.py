@@ -3,6 +3,8 @@ import pygame, math, tw_c
 class MyScreen:
     def __init__(self, width, height):
         pygame.init()
+        self.font = pygame.font.SysFont('Arial', 15)
+
         self.cw = width / 2
         self.ch = height / 2
         self.game_window = pygame.display.set_mode((width, height))
@@ -14,7 +16,7 @@ class MyScreen:
     
     def set_image_cache(self, player_data):
         for id in player_data:
-            self.image_cache[id] = self.make_image()
+            self.image_cache[id] = self.make_image(id)
 
     def redraw_window(self, player_data, my_id):
         self.game_window.fill((128,128,128))
@@ -23,6 +25,9 @@ class MyScreen:
         for id in player_data:
             # unpack image_data except for our data
             if id != my_id:
+                if not id in self.image_cache:
+                    # new remote client
+                    self.image_cache[id] = self.make_image(id)
                 image = self.image_cache[id] 
                 pos, angle = player_data[id]
                 centered_pos = self.screen_offset(pos, my_pos)
@@ -37,11 +42,16 @@ class MyScreen:
 
         pygame.display.flip()
 
-    def make_image(self):
+    def make_image(self, id):
+        # body and head colours derived from id value
         image = pygame.Surface((50, 25))
         image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
-        pygame.draw.rect(image, tw_c.RED, (0, 5, 50, 20))
-        pygame.draw.circle(image, tw_c.GREEN, (25, 10), 10)
+        body_idx = int(id) % len(tw_c.COLOURS)
+        head_idx = (body_idx + 1) % len(tw_c.COLOURS)
+        pygame.draw.rect(image, tw_c.COLOURS[body_idx], (0, 5, 50, 20))
+        pygame.draw.circle(image, tw_c.COLOURS[head_idx], (25, 10), 10)
+        image.blit(self.font.render(id, True, tw_c.BLACK), (0, 5, 50, 20)) # display id
+
         return image
 
     def image_rotate(self, image, topleft, rad_angle):
