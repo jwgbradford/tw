@@ -4,9 +4,10 @@ import json
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "192.168.0.81"
+        self.server = "localhost"
         self.port = 5555
-        self.addr = (self.server, self.port)
+        self.addr = (self.server, 
+        self.port)
         self.client.connect(self.addr)
         self.byte_length = 2048
 

@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 from random import randint
 from tw_renderer import MyScreen
 from tw_network import Network
@@ -42,6 +42,7 @@ class MyGame:
                 if event.type == pygame.QUIT:
                     run = False
                     pygame.quit()
+                    sys.exit()
             keys = pygame.key.get_pressed()
             # local config
             '''
