@@ -14,10 +14,9 @@ class MyGame:
 
     def main(self):
         run = True
-        
+        data = {}
         my_id = str(randint(0, 64000))
-        print('sending', my_id)
-
+        data["id"] = my_id
         # local config
         '''
         self.game_engine.add_player(my_id)
@@ -29,13 +28,12 @@ class MyGame:
 
         # network config
         n = Network()
-        n.send(my_id)
+        n.send(data)
         starting_data = n.receive()
         # end network config
 
         self.game_window.set_image_cache(starting_data)
         print('received', starting_data)
-
 
         while run:
             for event in pygame.event.get():
@@ -43,6 +41,7 @@ class MyGame:
                     run = False
                     pygame.quit()
             keys = pygame.key.get_pressed()
+            data["keys"] = keys
             # local config
             '''
             self.game_engine.move_player(my_id, keys)
@@ -52,7 +51,7 @@ class MyGame:
             #end local 
 
             # network config
-            n.send(keys)
+            n.send(data)
             player_data = n.receive()
             # end network
 

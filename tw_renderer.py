@@ -67,5 +67,4 @@ class MyScreen:
 # code to test renderer #
 
 if __name__ == '__main__':
-    
     my_game = MyScreen(500, 500)
