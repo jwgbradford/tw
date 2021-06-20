@@ -8,6 +8,7 @@ class Player:
         self.vel = 1
         self.turn = math.pi / 180
         self.player_image = self.make_image()
+        self.WORLD_BOUNDARY = (tw_c.WORLD_SIZE / 2) - 500
 
     def update(self, keys):
         self.move(keys)
@@ -31,6 +32,15 @@ class Player:
         if keys[82]: # up
             self.y -= self.vel * math.cos(self.dir)
             self.x -= self.vel * math.sin(self.dir)
+        # if we 'cross' the world boundary, bounce back
+        if self.y > self.WORLD_BOUNDARY:
+            self.y -= self.vel + 1
+        elif self.y < self.WORLD_BOUNDARY * -1:
+            self.y += self.vel + 1
+        if self.x > self.WORLD_BOUNDARY:
+            self.x -= self.vel + 1
+        elif self.x < self.WORLD_BOUNDARY * -1:
+            self.x += self.vel + 1
 
     def make_image(self):
         image = pygame.Surface((50, 25))

@@ -1,4 +1,4 @@
-import pygame, math, tw_c
+import pygame, math, tw_c, itertools
 
 class MyScreen:
     def __init__(self, width, height):
@@ -10,6 +10,8 @@ class MyScreen:
         # we're not storing objects for all the players in tw
         # just their id & images
         self.image_cache = {}
+        self.background = self.make_background()
+        self.origin = (-5000, -5000)
     
     def set_image_cache(self, player_data):
         for id in player_data:
@@ -19,9 +21,9 @@ class MyScreen:
         self.image_cache[id] = self.make_image()
 
     def redraw_window(self, player_data, my_id):
-        self.game_window.fill((128,128,128))
         my_pos, my_dir = player_data[my_id]
-        # if we have a background / scenery they must come first in our list
+        background_offset = self.screen_offset(self.origin, my_pos)
+        self.game_window.blit(self.background, background_offset)
         for id in player_data:
             if id not in self.image_cache: # new player joins
                 self.add_player_image(id)
@@ -64,3 +66,20 @@ class MyScreen:
         centered_x = rel_x + self.cw
         centered_y = rel_y + self.ch
         return (centered_x, centered_y)
+
+    def make_background(self): # this function creates a single image background
+        # set up a simple list of images that we can iterate through
+        images = itertools.cycle((tw_c.BLUE_IMAGE, tw_c.GRAY_IMAGE))
+        background = pygame.Surface((tw_c.WORLD_SIZE, tw_c.WORLD_SIZE))
+        TILES = int(tw_c.WORLD_SIZE / tw_c.TILE_SIZE)
+        # Use two nested for loops to get the coordinates.
+        for row in range(TILES):
+            for column in range(TILES):
+                # This alternates between the blue and gray image.
+                image = next(images)
+                # Blit one image after the other at their respective coords
+                background.blit(image, ((row * tw_c.TILE_SIZE) + tw_c.OFFSET, 
+                                        (column * tw_c.TILE_SIZE) + tw_c.OFFSET))
+            next(images)
+        #returns a surface, ready to be sent to the screen
+        return background
