@@ -10,7 +10,7 @@ class GameEngine:
         self.registered_players = []
 
     def on_start(self):
-        # we store all players in a dictionary
+        # we store all players (including npc/ai) in a dictionary
         # player_id : Player object
         players_dict = {}
         # setting up AI players
@@ -18,7 +18,6 @@ class GameEngine:
         ai_2 =  str(randint(0, 64000))
         players_dict[ai_1] = AI(ai_1, (100,100), 0)
         players_dict[ai_2] = AI(ai_2, (300,300), 0)
-        ###
         self.loads(players_dict)
         self.prepare_send_object()
 

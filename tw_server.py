@@ -1,6 +1,6 @@
 import json, pygame
 from threading import Thread
-from socket import socket, AF_INET, SOCK_STREAM
+from socket import socket, AF_INET, SOCK_STREAM, SO_REUSEADDR, SOL_SOCKET
 from tw_game_engine import GameEngine as tw_ge
 
 class TinyWorld:
@@ -13,6 +13,7 @@ class TinyWorld:
         # set up our server socket
         self.BUFSIZ = 2048
         self.SERVER = socket(AF_INET, SOCK_STREAM)
+        self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.SERVER.bind(ADDR)
         self.SERVER.listen(5)
         print("Waiting for a connection, Server Started")
@@ -21,28 +22,31 @@ class TinyWorld:
     def accept_new_players(self):
         while True:
             player, player_addr = self.SERVER.accept()
-            # start the player handler Thread
+            # start each player handler Thread
             Thread(target=self.handle_player, args=(player,)).start()
 
     # each player has a handler thread
     def handle_player(self, player_conn):
         player_data  = json.loads(player_conn.recv(self.BUFSIZ))
+        my_id  = player_data["id"]        
         # add new connection to clients
-        my_id  = player_data["id"]
         self.clients[player_conn] = my_id
         self.game_engine.add_player(my_id)
         while True:
-            # our main loop is to receive the keypresses from players
+            # our main loop is to receive the keypresses
             try:
                 data = json.loads(player_conn.recv(self.BUFSIZ))
-                if not data:
-                    print('Connection closed')
-                    break
-            except socket.error as e:
-                print(e)
+            except:
+                print('Connection lost')
                 break
             keys = data["keys"]
-            self.game_engine.move_player((my_id, keys))
+            move_data = (my_id, keys)
+            # and move the player
+            self.game_engine.move_player(move_data)
+        # clean up our registries
+        del self.game_engine.player_dict[my_id]
+        del self.clients[player_conn]
+        player_conn.close()
 
     # threaded code to run the game
     def run_game(self):
@@ -55,12 +59,6 @@ class TinyWorld:
             for sock in self.clients:
                 sock.send(json_data.encode())
             clock.tick(60)
-
-
-    # send msg to all clients
-    def broadcast(self, msg):
-        for sock in self.clients:
-            sock.send(msg.encode())
 
     def main(self):
         RUN_GAME = Thread(target=self.run_game)

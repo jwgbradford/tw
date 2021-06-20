@@ -13,7 +13,7 @@ class Player:
         self.move(keys)
 
     def move(self, keys):
-        # the json converstion strippes out the object wrapping
+        # the json converstion strips out the object wrapping
         # so we can't use pygame built-in CONSTANT values
         # remember we are also moving the 'world' relative to our player
         # so pressing the up key makes the 'world' move down
