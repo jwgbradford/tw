@@ -7,7 +7,7 @@ Deleted 'local' mode as it was not needed. Network mode works.
 
 There are two 'ai' players wandering around for your entertainment, they don't do anything except wander aimlessly in a circle.
 
-The server code supports new players joining (up to 5 simultaneously), and currently players exiting. Cleans up connections when players leave.
+The server code supports new players joining (up to 5 simultaneously), and currently players exiting. Cleans up connections when players leave. We don't trust the client, everything is done server-side.
 
 # To-Do
 Lots!

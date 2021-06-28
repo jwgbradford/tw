@@ -26,7 +26,7 @@ class MyScreen:
         background_offset = self.screen_offset(self.origin, my_pos)
         self.game_window.blit(self.background, background_offset)
         for id in player_data:
-            if id not in self.image_cache or player_data[id]["char_design"]["update"]: # new player joins
+            if id not in self.image_cache or player_data[id]["char_design"]["update"]:
                 image_data = player_data[id]["char_design"]
                 self.add_player_image(id, image_data)
             # unpack image_data except for our data
