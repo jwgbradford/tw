@@ -1,5 +1,4 @@
-import socket
-import json
+import socket, json
 
 class Network:
     def __init__(self):
@@ -11,8 +10,8 @@ class Network:
         self.byte_length = 2048
 
     def send(self, data):
+        json_data = json.dumps(data)
         try:
-            json_data = json.dumps(data)
             self.client.send(json_data.encode())
         except socket.error as e:
             print(e)

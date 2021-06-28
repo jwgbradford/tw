@@ -2,6 +2,7 @@ import json, pygame
 from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM, SO_REUSEADDR, SOL_SOCKET
 from tw_game_engine import GameEngine as tw_ge
+from tw_c import GAME_SPEED
 
 class TinyWorld:
     def __init__(self):
@@ -40,9 +41,8 @@ class TinyWorld:
                 print('Connection lost')
                 break
             keys = data["keys"]
-            move_data = (my_id, keys)
-            # and move the player
-            self.game_engine.move_player(move_data)
+            update_data = (my_id, keys)
+            self.game_engine.update_player(update_data)
         # clean up our registries
         del self.game_engine.player_dict[my_id]
         del self.clients[player_conn]
@@ -53,12 +53,12 @@ class TinyWorld:
         pygame.init()
         clock = pygame.time.Clock()
         while True:
-            self.game_engine.move_ai()
+            self.game_engine.move_npc()
             self.game_engine.prepare_send_object()
             json_data = json.dumps(self.game_engine.send_object)
             for sock in self.clients:
                 sock.send(json_data.encode())
-            clock.tick(60)
+            clock.tick(GAME_SPEED)
 
     def main(self):
         RUN_GAME = Thread(target=self.run_game)

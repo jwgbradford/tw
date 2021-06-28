@@ -12,40 +12,47 @@ class MyScreen:
         self.image_cache = {}
         self.background = self.make_background()
         self.origin = (-5000, -5000)
+        self.update_rect = pygame.Rect(0, 0, width, height)
     
     def set_image_cache(self, player_data):
         for id in player_data:
             self.image_cache[id] = self.make_image()
         
-    def add_player_image(self, id):
-        self.image_cache[id] = self.make_image()
+    def add_player_image(self, id, image_data):
+        self.image_cache[id] = self.make_image(image_data)
 
     def redraw_window(self, player_data, my_id):
-        my_pos, my_dir = player_data[my_id]
+        my_pos, my_dir = player_data[my_id]["pos_data"]
         background_offset = self.screen_offset(self.origin, my_pos)
         self.game_window.blit(self.background, background_offset)
         for id in player_data:
-            if id not in self.image_cache: # new player joins
-                self.add_player_image(id)
+            if id not in self.image_cache or player_data[id]["char_design"]["update"]: # new player joins
+                image_data = player_data[id]["char_design"]
+                self.add_player_image(id, image_data)
             # unpack image_data except for our data
             if id != my_id:
                 image = self.image_cache[id] 
-                pos, angle = player_data[id]
+                pos, angle = player_data[id]["pos_data"]
                 centered_pos = self.screen_offset(pos, my_pos)
                 # rotating surfaces is a bit tricky so we use a separate function
                 rotated_image, new_rect = self.image_rotate(image, centered_pos, angle)
                 self.game_window.blit(rotated_image, new_rect)
         # now we draw the player - always last so always on the top 'layer'
         # the player is also always at the centre of the screen
-        rotated_image, new_rect = self.image_rotate(self.image_cache[my_id], (self.cw, self.ch), my_dir)
+        rotated_image, new_rect = self.image_rotate(
+            self.image_cache[my_id], 
+            (self.cw, self.ch), 
+            my_dir)
         self.game_window.blit(rotated_image, new_rect)
-        pygame.display.flip()
+        pygame.display.update(self.update_rect)
 
-    def make_image(self):
+    def make_image(self, image_data):
+        body_colour = image_data["body_colour"]
+        head_colour = image_data["head_colour"]
         image = pygame.Surface((50, 25))
         image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
-        pygame.draw.rect(image, tw_c.RED, (0, 5, 50, 20))
-        pygame.draw.circle(image, tw_c.GREEN, (25, 10), 10)
+        pygame.draw.rect(image, body_colour, (0, 5, 50, 20))
+        pygame.draw.circle(image, head_colour, (25, 10), 10)
         return image
 
     def image_rotate(self, image, topleft, rad_angle):
@@ -78,8 +85,11 @@ class MyScreen:
                 # This alternates between the blue and gray image.
                 image = next(images)
                 # Blit one image after the other at their respective coords
-                background.blit(image, ((row * tw_c.TILE_SIZE) + tw_c.OFFSET, 
-                                        (column * tw_c.TILE_SIZE) + tw_c.OFFSET))
+                background.blit(
+                    image, 
+                    ((row * tw_c.TILE_SIZE) + tw_c.OFFSET, 
+                        (column * tw_c.TILE_SIZE) + tw_c.OFFSET)
+                    )
             next(images)
         #returns a surface, ready to be sent to the screen
         return background
