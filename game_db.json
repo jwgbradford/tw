@@ -1,0 +1,48 @@
+{
+"items" : [
+    {"id" : "i-1", 
+        "description" : "a small knife",
+        "surface" : "(20, 5)",
+        "design" : [
+            { "shape" : "polygon",
+                "coords" : "[(0,0), (20, 2.5), (0, 5)]",
+                "colour" : "(255, 255, 50)"
+            }
+        ]
+    }
+],
+"players" : [
+    {"id" : "npc-1",
+        "name" : "Bill",
+        "pos" : "(100, 100)",
+        "dir" : "0",
+        "surface" : "(50, 25)",
+        "design" : [
+            {"shape" : "rect",
+                "coords" : "(0, 5, 50, 20)",
+                "colour" : "(255, 50, 255)"
+            },
+            {"shape" : "circle",
+                "coords" : "(25,10)",
+                "radius" : "10",
+                "colour" : "(0, 255, 0)"}
+        ]
+    },
+    {"id" : "npc-2",
+        "name" : "Ben",
+        "pos" : "(300, 300)",
+        "dir" : "45",
+        "surface" : "(50, 25)",
+        "design" : [
+            {"shape" : "rect",
+                "coords" : "(0, 5, 50, 20)",
+                "colour" : "(0, 0, 255)"
+            },
+            {"shape" : "circle",
+                "coords" : "(25,10)",
+                "radius" : "10",
+                "colour" : "(0, 255, 0)"}
+        ]
+    }
+]
+}

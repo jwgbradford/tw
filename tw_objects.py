@@ -1,11 +1,29 @@
 import pygame, tw_c, math
 
-class Character(pygame.sprite.Sprite):
+class GameObject(pygame.sprite.Sprite):
     def __init__(self, id, pos, dir):
         super().__init__()
         self.id = id
         self.x, self.y = pos
         self.dir = dir
+
+    def make_image(self, design):
+        surf = design["surface"]
+        image = pygame.Surface(surf)
+        image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
+        for element in design["design"]:
+            element_colour = element["colour"]
+            if element["shape"] == "poly":
+                pygame.draw.polygon(image, element_colour, [(0,0), (20, 2.5), (0, 5)])
+            elif element["shape"] == "rect":
+                pygame.draw.rect(image, element_colour, (0, 5, 50, 20))
+            elif element["shape"] == "circle":
+                pygame.draw.circle(image, element_colour, (25, 10), 10)
+        return image
+
+class Character(GameObject):
+    def __init__(self, id, pos, dir):
+        super().__init__(id, pos, dir)
         self.vel = 1
         self.turn = math.pi / 180
         self.player_image = self.make_image()
@@ -17,8 +35,6 @@ class Character(pygame.sprite.Sprite):
         head_colour = self.char_design["head_colour"]
         body_colour = self.char_design["body_colour"]
         image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
-        pygame.draw.rect(image, head_colour, (0, 5, 50, 20))
-        pygame.draw.circle(image, body_colour, (25, 10), 10)
         return image
 
 class Player(Character):
@@ -94,3 +110,17 @@ class NPC(Character):
             self.dir -= 2 * math.pi
         self.y -= self.vel * math.cos(self.dir)
         self.x -= self.vel * math.sin(self.dir)
+
+class Weapon(GameObject):
+    def __init__(self, id, pos, dir):
+        super().__init__(id, pos, dir)
+        self.description = "a weapon"
+        self.image = self.make_image()
+        self.obj_design = {"name" : "small knife"}
+
+    def make_image(self):
+        image = pygame.Surface((20, 5))
+        blade_colour = tw_c.YELLOW
+        image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
+        pygame.draw.polygon(image, blade_colour, [(0,0), (20, 2.5), (0, 5)])
+        return image

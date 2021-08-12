@@ -54,8 +54,8 @@ class TinyWorld:
         clock = pygame.time.Clock()
         while True:
             self.game_engine.move_npc()
-            self.game_engine.prepare_send_object()
-            json_data = json.dumps(self.game_engine.send_object)
+            send_object = self.game_engine.prepare_send_object()
+            json_data = json.dumps(send_object)
             for sock in self.clients:
                 sock.send(json_data.encode())
             clock.tick(GAME_SPEED)
