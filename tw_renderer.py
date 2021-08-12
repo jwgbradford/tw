@@ -18,7 +18,7 @@ class MyScreen:
     def set_image_cache(self, player_data):
         for id in player_data:
             self.player_image_cache[id] = self.make_image()
-        
+    
     def add_player_image(self, id, image_data):
         self.player_image_cache[id] = self.make_image(image_data)
 
@@ -28,14 +28,13 @@ class MyScreen:
         background_offset = self.screen_offset(self.origin, my_pos)
         self.game_window.blit(self.background, background_offset)
         # then game objects
-        game_items = display_data["items"]
-        self.display_items(game_items, my_pos)
-        # then players
+        game_items = display_data["objects"]
         player_data = display_data["players"]
         self.display_players(player_data, my_id)
+        #self.display_items(game_items, player_data, my_id, my_pos)
         pygame.display.update(self.update_rect)
 
-    def display_items(self, game_items, my_pos):
+    def display_items(self, game_items):
         for id in game_items:
             if id not in self.player_image_cache or player_data[id]["char_design"]["update"]:
                 image_data = player_data[id]["char_design"]
@@ -78,6 +77,13 @@ class MyScreen:
         image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
         pygame.draw.rect(image, body_colour, (0, 5, 50, 20))
         pygame.draw.circle(image, head_colour, (25, 10), 10)
+        return image
+
+    def make_weapon_image(self):
+        image = pygame.Surface((20, 5))
+        blade_colour = tw_c.YELLOW
+        image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
+        pygame.draw.polygon(image, blade_colour, [(0,0), (20, 2.5), (0, 5)])
         return image
 
     def image_rotate(self, image, topleft, rad_angle):

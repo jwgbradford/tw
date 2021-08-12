@@ -24,6 +24,7 @@ class MyGame:
             data["keys"] = keys
             n.send(data)
             player_data = n.receive()
+            print(player_data)
             self.game_window.redraw_window(player_data, my_id)
 
 if __name__ == '__main__':
