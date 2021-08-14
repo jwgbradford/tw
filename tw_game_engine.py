@@ -22,7 +22,7 @@ class GameEngine:
 
         self.items_dict = {}
         weapon = "i" + str(randint(64001, 127999))
-        self.items_dict[weapon] = Weapon(weapon, (300, 100), 0)
+        self.items_dict[weapon] = Weapon(weapon, (250, 400), 0)
         self.prepare_send_object()
 
     def add_player(self, id):

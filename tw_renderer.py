@@ -9,44 +9,30 @@ class MyScreen:
         pygame.display.set_caption("TW - Client")
         # we're not storing objects for all the players in tw
         # just their id & images
-        self.image_cache = {'players': {}, 'items': {}}
+        self.image_cache = {'players': {}, 'objects': {}}
         self.background = self.make_background()
         self.origin = (-5000, -5000)
         self.update_rect = pygame.Rect(0, 0, width, height)
-    
-    def set_image_cache(self, image_data, image_type):
-        # image_data could be player_image_data or object_image_data
-        # it dose not matter as items are placed in sub dict of image_type
-        for id in image_data:
-            self.image_cache[image_type][id] = self.make_player_image()
 
     def redraw_window(self, display_data, my_id):
         # background first
-        my_pos = display_data["players"][my_id]["pos_data"][0]
+        my_pos, my_dir = display_data["players"][my_id]["pos_data"]
         background_offset = self.screen_offset(self.origin, my_pos)
         self.game_window.blit(self.background, background_offset)
-        # then game objects
-        game_items = display_data["objects"]
-        player_data = display_data["players"]
-        my_pos, my_dir = player_data[my_id]["pos_data"]
-        self.display_players(player_data, my_id)
-        self.display_items(game_items, my_pos, my_dir)
-        #self.display_items(game_items, player_data, my_id, my_pos)
+        self.display_game_objects(display_data, my_id, my_pos, my_dir) # then game objects
         pygame.display.update(self.update_rect)
 
-    def display_players(self, player_data, my_id):
-        my_pos, my_dir = player_data[my_id]["pos_data"]
-        for id in player_data:
-            if id not in self.image_cache['players'] or player_data[id]["char_design"]["update"]:
-                image_data = player_data[id]["char_design"]
-                self.image_cache['players'][id] = self.make_player_image(image_data)
-            # unpack image_data except for our data
-            if id != my_id:
-                image = self.image_cache['players'][id] 
-                pos, angle = player_data[id]["pos_data"]
-                centered_pos = self.screen_offset(pos, my_pos)
-                # rotating surfaces is a bit tricky so we use a separate function
-                rotated_image, new_rect = self.image_rotate(image, centered_pos, angle)
+    def display_game_objects(self, display_data, my_id, my_pos, my_dir):
+        for image_type in display_data:
+            for image_id in display_data[image_type]:
+                image_data = display_data[image_type][image_id]
+                self.update_image_cache(image_id, image_data, image_type)
+                if (image_type == 'objects') or (image_id != my_id):
+                    image = self.image_cache[image_type][image_id] 
+                    pos, angle = image_data["pos_data"]
+                    centered_pos = self.screen_offset(pos, my_pos)
+                    # rotating surfaces is a bit tricky so we use a separate function
+                    rotated_image, new_rect = self.image_rotate(image, centered_pos, angle)
                 self.game_window.blit(rotated_image, new_rect)
         # now we draw the player - always last so always on the top 'layer'
         # the player is also always at the centre of the screen
@@ -56,34 +42,26 @@ class MyScreen:
             my_dir)
         self.game_window.blit(rotated_image, new_rect)
 
-    def display_items(self, item_data, my_pos, my_dir):
-        for id in item_data:
-            if id not in self.image_cache['items']:
-                image_data = item_data[id]["char_design"]
-                self.image_cache['items'][id] = self.make_weapon_image()
-            # unpack image_data except for our data
-            image = self.image_cache['items'][id] 
-            pos, angle = item_data[id]["pos_data"]
-            centered_pos = self.screen_offset(pos, my_pos)
-            # rotating surfaces is a bit tricky so we use a separate function
-            rotated_image, new_rect = self.image_rotate(image, centered_pos, angle)
-            self.game_window.blit(rotated_image, new_rect)
+    def update_image_cache(self, image_id, image_data, image_type):
+        if image_id not in self.image_cache[image_type]:
+            image = self.make_image(image_data["char_design"], image_type)
+            self.image_cache[image_type][image_id] = image
 
-    def make_player_image(self, image_data):
-        body_colour = image_data["body_colour"]
-        head_colour = image_data["head_colour"]
-        image = pygame.Surface((50, 25))
-        image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
-        pygame.draw.rect(image, body_colour, (0, 5, 50, 20))
-        pygame.draw.circle(image, head_colour, (25, 10), 10)
+    def make_image(self, image_data, image_type):
+        if image_type == 'players':
+            body_colour = image_data["body_colour"]
+            head_colour = image_data["head_colour"]
+            image = pygame.Surface((50, 25))
+            image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
+            pygame.draw.rect(image, body_colour, (0, 5, 50, 20))
+            pygame.draw.circle(image, head_colour, (25, 10), 10)
+        else:
+            image = pygame.Surface((20, 5))
+            blade_colour = tw_c.YELLOW
+            image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
+            pygame.draw.polygon(image, blade_colour, [(0,0), (20, 2.5), (0, 5)]) 
         return image
 
-    def make_weapon_image(self):
-        image = pygame.Surface((20, 5))
-        blade_colour = tw_c.YELLOW
-        image.set_colorkey(tw_c.BLACK)  # Black colors will not be blit.
-        pygame.draw.polygon(image, blade_colour, [(0,0), (20, 2.5), (0, 5)])
-        return image
 
     def image_rotate(self, image, topleft, rad_angle):
         # our angles are in radians, need to convert to degrees
