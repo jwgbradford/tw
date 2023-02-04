@@ -7,7 +7,6 @@ from settings import GAME_SPEED
 
 class TinyWorld:
     def __init__(self) -> None:
-        #self.game_engine = tw_ge()
         self.clients = {} # empty dictionary for client list
         # set up our server socket
         self.network = Network()
@@ -23,25 +22,19 @@ class TinyWorld:
 
     # each player has a handler thread
     def handle_player(self, player_conn):
-        player_data  = player_conn.get_data()
-        my_id  = player_data["id"]
+        player_data  = self.network.get_data(player_conn)
+        my_id  = list(player_data.keys())[0]
         # add new connection to clients
-        self.clients[player_conn] = my_id
-        #self.game_engine.add_player(my_id)
+        self.clients[my_id] = player_conn
         while True:
-            # our main loop is to receive the keypresses
+            # our main loop 
             try:
-                data = player_conn.get_data()
+                data = self.network.get_data(player_conn)
             except:
                 print('Connection lost')
                 break
-            #keys = data["keys"]
-            #update_data = (my_id, keys)
-            #self.game_engine.update_player(update_data)
-            print(data)
-        # clean up our registries
-        #del self.game_engine.player_dict[my_id]
-        #del self.clients[player_conn]
+
+            print('data received', data)
         player_conn.close()
 
     # threaded code to run the game
@@ -50,10 +43,13 @@ class TinyWorld:
         clock = pygame.time.Clock()
         msg_id = 1
         while True:
-            #data_to_send = self.game_engine.prepare_send_object()
-            data_to_send = {"data" : msg_id}
-            for sock in self.clients:
-                sock.send_data(data_to_send)
+            data_to_send = {}
+            for player_id in self.clients:
+                data_to_send[player_id] = {}
+                data_to_send[player_id]['data'] = msg_id
+                player_conn = self.clients[player_id]
+                self.network.send_data(player_conn, data_to_send)
+                print(player_id, data_to_send)
             msg_id += 1
             clock.tick(GAME_SPEED)
 

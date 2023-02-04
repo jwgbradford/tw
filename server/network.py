@@ -8,16 +8,16 @@ class Network:
         self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.SERVER.bind(ADDR)
 
-    def send_data(self, data) -> None:
+    def send_data(self, player_conn, data) -> None:
         json_data = dumps(data)
         try:
-            self.SERVER.send(json_data.encode())
+            player_conn.send(json_data.encode())
         except error as e:
             print(e)
 
-    def get_data(self):
+    def get_data(self, player_conn):
         try:
-            return loads(self.SERVER.recv(BUFSIZ))
+            return loads(player_conn.recv(BUFSIZ))
         except error as e:
             print(e)
             return e
