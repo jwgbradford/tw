@@ -1,6 +1,6 @@
 import pygame
 from random import randint
-from tw_objects import Player, NPC, Weapon
+from server.tw_objects import Player, NPC, Weapon
 from tw_c import GAME_TICK
 
 class GameEngine:
