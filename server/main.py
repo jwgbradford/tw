@@ -2,8 +2,6 @@ import pygame
 from threading import Thread
 from network import Network
 from settings import GAME_SPEED
-#from tw_game_engine import GameEngine as tw_ge
-#from tw_c import GAME_SPEED
 
 class TinyWorld:
     def __init__(self) -> None:
