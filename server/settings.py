@@ -1,3 +1,5 @@
+import pygame, itertools
+
 # server settings
 HOST = ''
 PORT = 5555
@@ -8,7 +10,6 @@ BUFSIZ = 2048
 GAME_SPEED = 2 # fps
 GAME_TICK = 1/GAME_SPEED
 
-import pygame, itertools
 # rgb colours
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, GREEN, BLUE = (255, 0, 0), (0, 255, 0), (0, 0, 255)

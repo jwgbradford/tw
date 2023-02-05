@@ -53,7 +53,7 @@ class TinyWorld:
                 data_to_send[player_id]['msg_id'] = msg_id
                 player_conn = self.clients[player_id]
                 self.network.send_data(player_conn, data_to_send)
-                print(data_to_send)
+                #print(data_to_send)
             msg_id += 1
             clock.tick(GAME_SPEED)
 
