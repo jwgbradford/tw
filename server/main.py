@@ -1,5 +1,5 @@
 import pygame
-from time import sleep
+from time import sleep # need to get rid of at some point
 from threading import Thread
 from network import Network
 from settings import GAME_SPEED
@@ -38,20 +38,20 @@ class TinyWorld:
                 print('correpted connection')
                 break
             else:
-                print('data received', new_data)
+                #print('data received', new_data)
                 receive_msg_id = new_data[my_id]['msg_id']
             try: # to load the data to send from the output buffer
                 my_data = {my_id : self.output_buffer[my_id]}
             except: # if it doesn't exist, make up some dummy data
                 my_data = {my_id : {'send_msg_id' : 1, 'send_data' : 'pending'}}
-            print(my_data, send_msg_id)
+            #print(my_data, send_msg_id)
             while send_msg_id == my_data[my_id]['send_msg_id']:
-                try:
+                try: # update to latest send_msg from server
                     my_data = {my_id : self.output_buffer[my_id]}
-                    sleep(0.1) # nasty horrible code, but think of better way right now
+                    sleep(0.1) # nasty horrible code, but can't think of better way right now
                 except: # keep checking until the server updates the output buffer
                     my_data = {my_id : {'send_msg_id' : 1, 'send_data' : 'pending'}}
-            print('send', my_data)
+            #print('send', my_data)
             self.network.send_data(player_conn, my_data)
             send_msg_id = my_data[my_id]['send_msg_id']
         player_conn.close()
@@ -73,7 +73,7 @@ class TinyWorld:
                 player_conn = self.clients[player_id]
                 self.network.send_data(player_conn, data_to_send)
                 '''
-            print(self.output_buffer)
+            #print(self.output_buffer)
             msg_id += 1
             clock.tick(GAME_SPEED)
 

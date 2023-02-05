@@ -18,7 +18,7 @@ class MyGame:
             #print('sent ',self.send_data)
             n.send(self.send_data)
             self.receive_data = n.receive()
-            print('received ',self.receive_data)
+            #print('received ',self.receive_data)
             msg_id += 1
 
     def main(self):
