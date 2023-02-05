@@ -15,10 +15,10 @@ class MyGame:
         self.send_data[my_id] = {}
         while True:
             self.send_data[my_id]['msg_id'] = msg_id
-            #print(self.send_data)
+            #print('sent ',self.send_data)
             n.send(self.send_data)
             self.receive_data = n.receive()
-            #print(self.receive_data)
+            print('received ',self.receive_data)
             msg_id += 1
 
     def main(self):
