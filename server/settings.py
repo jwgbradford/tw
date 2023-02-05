@@ -8,6 +8,7 @@ BUFSIZ = 2048
 GAME_SPEED = 2 # fps
 GAME_TICK = 1/GAME_SPEED
 
+import pygame, itertools
 # rgb colours
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, GREEN, BLUE = (255, 0, 0), (0, 255, 0), (0, 0, 255)
@@ -24,4 +25,3 @@ GRAY_IMAGE = pygame.Surface((TILE_SIZE,TILE_SIZE))
 GRAY_IMAGE.fill(pygame.Color('slategray4'))
 
 
-import pygame, itertools
