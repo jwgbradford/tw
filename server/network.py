@@ -4,9 +4,9 @@ from settings import ADDR, BUFSIZ
 
 class Network:
     def __init__(self) -> None:
-        self.SERVER = socket(AF_INET, SOCK_STREAM)
-        self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.SERVER.bind(ADDR)
+        self.Connection = socket(AF_INET, SOCK_STREAM)
+        self.Connection.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        self.Connection.bind(ADDR)
 
     def send_data(self, player_conn, data) -> None:
         json_data = dumps(data)

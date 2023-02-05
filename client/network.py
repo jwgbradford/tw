@@ -19,4 +19,4 @@ class Network:
             return loads(self.client.recv(BUFSIZ))
         except error as e:
             print(e)
-            return e    
+            return e 

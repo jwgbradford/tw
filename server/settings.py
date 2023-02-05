@@ -1,10 +1,12 @@
-import pygame, itertools
-
 # server settings
 HOST = ''
 PORT = 5555
 ADDR = (HOST, PORT)
 BUFSIZ = 2048
+
+# base game settings
+GAME_SPEED = 2 # fps
+GAME_TICK = 1/GAME_SPEED
 
 # rgb colours
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
@@ -21,5 +23,5 @@ BLUE_IMAGE.fill(pygame.Color('lightskyblue2'))
 GRAY_IMAGE = pygame.Surface((TILE_SIZE,TILE_SIZE))
 GRAY_IMAGE.fill(pygame.Color('slategray4'))
 
-GAME_SPEED = 2 # fps
-GAME_TICK = 1/GAME_SPEED
+
+import pygame, itertools
